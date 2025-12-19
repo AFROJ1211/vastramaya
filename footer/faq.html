@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FAQ | Vastramaya</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS VARIABLES (MATCHING BRAND) --- */
+        :root {
+            --page-bg: #fefcf3;
+            --surface-card: #fffefb;
+            --brand-primary: #8b2635; /* Maroon */
+            --brand-gradient: linear-gradient(135deg, #8b2635 0%, #d33d49 100%);
+            --text-primary: #3f0b17;
+            --text-secondary: #6b422a;
+            --text-light: #a3715f;
+            --gold-accent: #c5a065;
+            --border-subtle: #e8d5c4;
+            --shadow-soft: 0 10px 40px -10px rgba(63, 11, 23, 0.08);
+            --shadow-deep: 0 20px 50px -12px rgba(63, 11, 23, 0.15);
+            --radius: 12px;
+        }
+
+        /* --- GLOBAL STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        /* --- HEADER SECTION --- */
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .hero-subtitle {
+            font-size: 13px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            display: block;
+            font-weight: 700;
+        }
+
+        .page-header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            color: var(--brand-primary);
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .gold-divider {
+            width: 60px;
+            height: 1px;
+            background: var(--gold-accent);
+            margin: 0 auto 25px auto;
+            opacity: 0.6;
+        }
+
+        .intro-text {
+            max-width: 600px;
+            margin: 0 auto;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+        }
+
+        /* --- FAQ CATEGORY STYLING --- */
+        .faq-category {
+            margin-bottom: 60px;
+            opacity: 0; /* For animation */
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .category-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .category-title span {
+            color: var(--gold-accent);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-right: 15px;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        /* --- ACCORDION ITEM --- */
+        .accordion-item {
+            background: var(--surface-card);
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+        }
+
+        .accordion-item:hover {
+            border-color: var(--gold-accent);
+            box-shadow: var(--shadow-soft);
+            transform: translateY(-2px);
+        }
+
+        .accordion-item.active {
+            border-color: var(--brand-primary);
+            box-shadow: var(--shadow-deep);
+            background: #fff;
+        }
+
+        /* --- ACCORDION HEADER --- */
+        .accordion-header {
+            width: 100%;
+            padding: 24px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-header {
+            color: var(--brand-primary);
+            font-weight: 700;
+        }
+
+        /* --- ICON ANIMATION --- */
+        .icon-box {
+            width: 28px;
+            height: 28px;
+            position: relative;
+            flex-shrink: 0;
+            margin-left: 20px;
+            border-radius: 50%;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+        }
+
+        .icon-box::before, .icon-box::after {
+            content: '';
+            position: absolute;
+            background-color: var(--text-light);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .icon-box::before { width: 10px; height: 1.5px; } /* Horizontal */
+        .icon-box::after { width: 1.5px; height: 10px; } /* Vertical */
+
+        /* Active Icon State */
+        .accordion-item.active .icon-box {
+            border-color: var(--brand-primary);
+            background: var(--brand-primary);
+            transform: rotate(90deg);
+        }
+        
+        .accordion-item.active .icon-box::before,
+        .accordion-item.active .icon-box::after {
+            background-color: #fff;
+        }
+        
+        .accordion-item.active .icon-box::after {
+            height: 0; /* Turns + into - or just rotate 45deg for x */
+            opacity: 0;
+        }
+
+        /* --- CONTENT --- */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: #fff;
+        }
+
+        .accordion-body {
+            padding: 0 30px 30px 30px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.8;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        
+        .accordion-item.active .accordion-body {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .accordion-body ul {
+            padding-left: 20px;
+            margin-top: 15px;
+        }
+        
+        .accordion-body ul li {
+            margin-bottom: 8px;
+            list-style-type: disc;
+            color: var(--text-light);
+        }
+
+        .accordion-body a {
+            color: var(--brand-primary);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--brand-primary);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .accordion-body a:hover {
+            color: var(--text-primary);
+            border-bottom-style: solid;
+        }
+
+        /* --- CONTACT CTA --- */
+        .contact-cta {
+            text-align: center;
+            margin-top: 80px;
+            padding: 60px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .watermark-v {
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            font-size: 10rem;
+            font-family: "Cormorant Garamond", serif;
+            color: var(--brand-primary);
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .contact-cta h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+        
+        .contact-cta p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+
+        .btn-contact {
+            display: inline-block;
+            padding: 14px 35px;
+            background: var(--brand-gradient);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px -5px rgba(139, 38, 53, 0.3);
+        }
+
+        .btn-contact:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px rgba(139, 38, 53, 0.4);
+        }
+
+        footer {
+            text-align: center;
+            padding: 50px 0 20px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            border-top: 1px solid rgba(139, 38, 53, 0.05);
+            margin-top: 60px;
+        }
+
+        /* --- ANIMATIONS --- */
+        .visible { opacity: 1; transform: translateY(0); }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .container { padding: 40px 15px; }
+            .page-header h1 { font-size: 2.5rem; }
+            .accordion-header { padding: 20px; font-size: 1rem; }
+            .accordion-body { padding: 0 20px 25px 20px; }
+            .contact-cta { padding: 40px 20px; }
+            .category-title { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="page-header">
+            <span class="hero-subtitle">Help Center</span>
+            <h1>Frequently Asked Questions</h1>
+            <div class="gold-divider"></div>
+            <p class="intro-text">Everything you need to know about our heritage, shipping, and care.</p>
+        </div>
+
+        <!-- CATEGORY: GENERAL -->
+        <div class="faq-category">
+            <h2 class="category-title"><span>01</span> General Information</h2>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    What defines the Vastramaya collection?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        Vastramaya offers a curated collection of traditional Indian clothing, bridging timeless handloom heritage with modern elegance. Each piece is sourced directly from trusted artisans across India, ensuring authenticity in every thread.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    Why might product colors vary slightly?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        We capture our products in studio lighting to be as true to life as possible. However, slight variations may occur due to different screen calibrations or the handcrafted nature of natural dyes. These nuances are the hallmark of authentic ethnic wear.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    How can I reach customer support?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        We are here to assist you. Email us at <a href="mailto:vastramayamagic@gmail.com">vastramayamagic@gmail.com</a> or reach out via WhatsApp/Call at <strong>+91 86394 78312</strong> (Mon-Sat, 10 AM - 7 PM).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORY: ORDERS & PAYMENTS -->
+        <div class="faq-category">
+            <h2 class="category-title"><span>02</span> Orders & Payments</h2>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    What payment methods are accepted?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        We ensure a seamless checkout experience via Razorpay. Accepted methods include:
+                        <ul>
+                            <li>UPI (GPay, PhonePe, Paytm, etc.)</li>
+                            <li>Credit & Debit Cards (Visa, Mastercard, RuPay)</li>
+                            <li>Net Banking (All major Indian banks)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    Is Cash on Delivery (COD) available?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        Yes, COD is available for most pincodes. A small handling fee of ₹100 is applicable on COD orders. You can check availability by entering your pincode at checkout.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    Can I modify or cancel my order?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        Orders can be cancelled or modified only <strong>before dispatch</strong>. Once the shipping label is generated, we cannot alter the order. Please contact support immediately if you need changes.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORY: SHIPPING -->
+        <div class="faq-category">
+            <h2 class="category-title"><span>03</span> Shipping & Delivery</h2>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    Do you ship internationally?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        Currently, we ship exclusively within India. We are working on expanding our logistics to serve global customers soon.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    What are the delivery timelines?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        Standard processing takes 1–2 business days. Delivery typically takes <strong>3–7 business days</strong> depending on your location (Metro cities are faster). You will receive tracking details via email/SMS once dispatched.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    What should I do if my package arrives damaged?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        Please <strong>do not accept</strong> a package if the seal is broken or the box is visibly damaged. If you discover damage after opening, please record an unboxing video and email us within 48 hours for a swift resolution.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORY: RETURNS -->
+        <div class="faq-category">
+            <h2 class="category-title"><span>04</span> Returns & Refunds</h2>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    What is your return policy?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        We accept returns for damaged, defective, or incorrect items reported within <strong>48 hours</strong> of delivery. The product must be unused, unwashed, and have all original tags attached.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    Are sale items returnable?
+                    <div class="icon-box"></div>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        Clearance or Sale items are final sale and cannot be returned unless they arrive damaged. Please check the product description carefully before purchasing.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact CTA -->
+        <div class="contact-cta">
+            <div class="watermark-v">V</div>
+            <h3>Still have questions?</h3>
+            <p>Our concierge team is ready to assist you with any inquiries.</p>
+            <a href="contact.html" class="btn-contact">Contact Us</a>
+        </div>
+
+        <footer>
+            &copy; 2025 Vastramaya. All Rights Reserved.
+        </footer>
+    </div>
+
+    <script>
+        // 1. Accordion Logic
+        const accordions = document.querySelectorAll('.accordion-header');
+
+        accordions.forEach(acc => {
+            acc.addEventListener('click', function() {
+                const item = this.parentElement;
+                const content = this.nextElementSibling;
+
+                // Close other open items
+                document.querySelectorAll('.accordion-item').forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                        otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                    }
+                });
+
+                // Toggle current item
+                item.classList.toggle('active');
+
+                if (item.classList.contains('active')) {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                } else {
+                    content.style.maxHeight = null;
+                }
+            });
+        });
+
+        // 2. Scroll Animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.faq-category').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+
+</body>
+</html>
