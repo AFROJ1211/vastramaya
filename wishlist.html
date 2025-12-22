@@ -38,11 +38,52 @@
             --progress-bg: rgba(59, 11, 23, 0.15);
             --radius: 12px;
             --font-main: 'DM Sans', sans-serif;
+            
+            /* New Footer Variables */
+            --footer-bg-lux: #0c1f1a;
+            --footer-gold: #e6d2a9;
+            --footer-gold-glow: rgba(230, 210, 169, 0.3);
+            --footer-silver: #b8c9c3;
+            --border-glow: rgba(227, 207, 169, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { min-height: 100vh; background: var(--page-bg); font-family: "DM Sans", Roboto, sans-serif; overflow-x: hidden; color: var(--text-primary); width: 100%; }
         body.modal-open { overflow: hidden; } 
+        body.login-modal-open { overflow: hidden !important; }
+
+        /* --- SMOOTH REMOVAL ANIMATIONS --- */
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(-20px) scale(0.9); }
+        }
+
+        @keyframes slideOut {
+            from { 
+                opacity: 1;
+                transform: translateX(0);
+                max-height: 500px;
+                margin-bottom: 25px;
+            }
+            to { 
+                opacity: 0;
+                transform: translateX(-100%);
+                max-height: 0;
+                margin-bottom: 0;
+                padding: 0;
+                border: none;
+            }
+        }
+
+        .removing {
+            animation: slideOut 0.4s ease-out forwards !important;
+            overflow: hidden !important;
+            pointer-events: none !important;
+        }
+
+        .card.fade-out {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
 
         /* --- NAVBAR STYLES --- */
         .page-desktop { min-height: 100vh; display: flex; flex-direction: column; width: 100%; }
@@ -206,14 +247,41 @@
         .mobile-buy-btn { width: 100%; padding: 16px; background: var(--brand-gradient); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden; }
         .mobile-buy-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139, 38, 53, 0.3); }
 
-        /* AUTH MODAL STYLES */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(40, 10, 15, 0.6); backdrop-filter: blur(6px); z-index: 5000; opacity: 0; visibility: hidden; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; padding: 16px; }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
+        /* AUTH MODAL STYLES - UPDATED FOR LOGIN GUARD */
+        .modal-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: rgba(40, 10, 15, 0.6); 
+            backdrop-filter: blur(6px); 
+            z-index: 5000; 
+            opacity: 0; 
+            visibility: hidden; 
+            transition: all 0.3s ease; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 16px; 
+        }
+        .modal-overlay.active { 
+            opacity: 1; 
+            visibility: visible; 
+        }
+        .modal-overlay.login-guard-active {
+            z-index: 10000 !important;
+            background: rgba(20, 10, 10, 0.85) !important;
+        }
         .login-container { width: 100%; max-width: 400px; height: auto; max-height: 90vh; background-color: var(--surface-card); display: flex; flex-direction: column; position: relative; border-radius: 16px; box-shadow: var(--shadow-modal); overflow: hidden; transform: scale(0.95); opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .modal-overlay.active .login-container { transform: scale(1); opacity: 1; }
         .login-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--brand-gradient); z-index: 10; }
-        .modal-close-btn { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--surface-light); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s ease; z-index: 50; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .modal-close-btn:hover { background: var(--surface-hover); border-color: var(--brand-primary); }
+        .modal-close-btn { 
+            display: none; /* Hidden for login guard */
+        }
+        .login-guard-close { /* Only used for login guard */
+            display: none !important;
+        }
         .close-icon-lines { width: 14px; height: 14px; position: relative; }
         .close-icon-lines::before, .close-icon-lines::after { content: ""; position: absolute; inset: 0; margin: auto; width: 14px; height: 2px; border-radius: 999px; background: var(--text-primary); }
         .close-icon-lines::before { transform: rotate(45deg); }
@@ -372,6 +440,11 @@
             border: none; 
             display: flex; align-items: center; justify-content: center; 
             cursor: pointer; z-index: 10; color: #fff; 
+            transition: all 0.3s ease;
+        }
+        .wishlist-btn-abs:hover { 
+            transform: scale(1.1);
+            background: var(--brand-primary);
         }
         .wishlist-btn-abs svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2; }
 
@@ -1376,6 +1449,481 @@
                 display: none !important;
             }
         }
+
+        /* --- NEW FOOTER STYLES --- */
+        .site-footer {
+            background: linear-gradient(180deg, var(--footer-bg-lux) 0%, #0a1512 100%);
+            color: var(--footer-silver);
+            padding: 120px 40px 50px;
+            width: 100%;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Premium Top Border with Glow Effect */
+        .site-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 94%;
+            max-width: 1400px;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--footer-gold) 20%, 
+                var(--footer-gold) 50%, 
+                var(--footer-gold) 80%, 
+                transparent 100%
+            );
+            box-shadow: 0 0 20px var(--footer-gold-glow);
+        }
+
+        /* Subtle background pattern */
+        .site-footer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48.97 0l3.657 3.657-1.414 1.414L46.143 0h2.827zM11.03 0L7.372 3.657l1.415 1.414L13.857 0H11.03zM32.343 0l6.485 6.485-1.414 1.414L29.515 0h2.828zM27.657 0l-6.485 6.485 1.414 1.414L30.485 0h-2.828zM21.03 0l-3.656 3.657 1.414 1.414L23.857 0H21.03zM38.97 0l3.657-3.657L41.213-5.07 36.143 0h2.827z' fill='%231a2e28' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr 1.2fr;
+            gap: 80px;
+            padding-bottom: 90px;
+            border-bottom: 1px solid rgba(227, 207, 169, 0.08);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Brand Section - More Luxurious */
+        .footer-brand h3 {
+            font-size: 42px;
+            font-weight: 300;
+            margin: 0 0 35px 0;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--footer-gold);
+            font-family: "Cormorant Garamond", "Times New Roman", serif;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-brand h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 1px;
+            background: var(--footer-gold);
+            opacity: 0.6;
+        }
+
+        .footer-desc {
+            font-size: 15.5px;
+            line-height: 1.9;
+            color: var(--footer-silver);
+            margin-bottom: 45px;
+            max-width: 400px;
+            font-weight: 350;
+            letter-spacing: 0.3px;
+            opacity: 0.9;
+            padding-right: 20px;
+        }
+
+        /* Social Icons - More Refined */
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .social-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(227, 207, 169, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--footer-gold);
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(227, 207, 169, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .social-icon:hover {
+            border-color: var(--footer-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 38, 53, 0.2);
+        }
+
+        .social-icon:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Column Headers with Decorative Element */
+        .footer-col h4 {
+            font-size: 11px;
+            font-weight: 600;
+            margin: 0 0 40px 0;
+            color: var(--footer-gold);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--footer-gold), transparent);
+        }
+
+        /* Enhanced Links List - Full Clickable Area Logic */
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+
+        /* Make the Anchor tag the clickable container */
+        .footer-links a {
+            text-decoration: none;
+            color: var(--footer-silver);
+            font-size: 14.5px;
+            font-weight: 350;
+            transition: all 0.3s ease;
+            position: relative;
+            display: block; /* Makes the entire line clickable */
+            width: 100%;
+            padding-left: 0;
+        }
+
+        /* Icon attached to Anchor tag now */
+        .footer-links a::before {
+            content: '⟡';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            color: var(--footer-gold);
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover states on the Anchor tag */
+        .footer-links a:hover {
+            color: #fff;
+            letter-spacing: 0.5px;
+            padding-left: 25px; /* Creates the gap inside the clickable area */
+        }
+
+        .footer-links a:hover::before {
+            opacity: 1;
+            left: 0;
+        }
+
+        /* Premium Contact Section */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(227, 207, 169, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-contact-item:hover {
+            background: rgba(18, 40, 35, 0.6);
+            border-color: var(--border-glow);
+            transform: translateY(-2px);
+        }
+
+        .icon-box {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, rgba(227, 207, 169, 0.1), rgba(139, 38, 53, 0.1));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--footer-gold);
+            flex-shrink: 0;
+            border: 1px solid rgba(227, 207, 169, 0.1);
+        }
+        
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            color: var(--footer-gold);
+            opacity: 0.7;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .contact-value {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 350;
+            letter-spacing: 0.3px;
+        }
+
+        /* Enhanced Footer Bottom */
+        .footer-bottom {
+            padding-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--footer-silver);
+            font-weight: 350;
+            letter-spacing: 1.2px;
+            opacity: 0.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-bottom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--footer-gold) 50%, transparent);
+            opacity: 0.2;
+        }
+        
+        /* Developer Link Style */
+        .dev-link {
+            color: var(--footer-gold);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .dev-link:hover {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(230, 210, 169, 0.4);
+        }
+
+        /* Responsive Refinements */
+        @media (max-width: 1200px) {
+            .footer-content {
+                gap: 60px;
+                grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 60px;
+            }
+            .footer-brand {
+                grid-column: span 2;
+                text-align: left;
+            }
+            .footer-desc {
+                margin: 0 0 40px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .site-footer {
+                padding: 80px 24px 40px;
+            }
+            
+            .footer-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas:
+                    "brand brand"
+                    "collections services"
+                    "concierge concierge";
+                gap: 40px;
+                text-align: left;
+            }
+
+            .footer-brand {
+                grid-area: brand;
+                grid-column: 1 / -1;
+                text-align: left;
+            }
+
+            .footer-brand h3 {
+                font-size: 36px;
+                letter-spacing: 4px;
+                text-align: left;
+            }
+
+            .footer-brand h3::after {
+                left: 0;
+                transform: none;
+            }
+
+            .footer-desc {
+                text-align: left;
+                padding-right: 0;
+                margin: 0 0 45px 0;
+                max-width: 100%;
+            }
+
+            .social-links {
+                justify-content: flex-start;
+            }
+
+            .footer-col:nth-child(2) {
+                grid-area: collections;
+                width: 100%;
+            }
+
+            .footer-col:nth-child(3) {
+                grid-area: services;
+                width: 100%;
+            }
+
+            .footer-col:nth-child(4) {
+                grid-area: concierge;
+                grid-column: 1 / -1;
+                width: 100%;
+            }
+
+            .contact-info {
+                align-items: stretch;
+            }
+
+            /* Remove hover effects for links on mobile */
+            .footer-col:nth-child(2) .footer-links a:hover,
+            .footer-col:nth-child(3) .footer-links a:hover {
+                color: var(--footer-silver);
+                letter-spacing: 0;
+                padding-left: 0;
+            }
+
+            .footer-col:nth-child(2) .footer-links a:hover::before,
+            .footer-col:nth-child(3) .footer-links a:hover::before {
+                opacity: 0;
+                left: -15px;
+            }
+
+            .footer-col:nth-child(2) h4,
+            .footer-col:nth-child(3) h4 {
+                text-align: left;
+            }
+
+            .footer-col:nth-child(2) h4::after,
+            .footer-col:nth-child(3) h4::after {
+                left: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .site-footer {
+                padding: 60px 20px 30px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas:
+                    "brand brand"
+                    "collections services"
+                    "concierge concierge";
+                gap: 35px;
+            }
+
+            .footer-brand h3 {
+                font-size: 32px;
+                letter-spacing: 3px;
+            }
+
+            .footer-col:nth-child(2),
+            .footer-col:nth-child(3) {
+                width: 100%;
+            }
+
+            .footer-col:nth-child(4) {
+                grid-column: 1 / -1;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .site-footer {
+                padding: 60px 16px 30px;
+            }
+            
+            .footer-content {
+                gap: 30px 20px;
+            }
+
+            .footer-col h4 {
+                margin: 0 0 25px 0;
+                padding-bottom: 8px;
+            }
+
+            .footer-links li {
+                margin-bottom: 16px;
+            }
+
+            .footer-links a {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1577,7 +2125,7 @@
     <!-- AUTH MODAL -->
     <div class="modal-overlay" id="login-modal-overlay">
         <div class="login-container">
-            <button class="modal-close-btn" id="close-modal-btn"><div class="close-icon-lines"></div></button>
+            <button class="modal-close-btn login-guard-close" id="close-modal-btn"><div class="close-icon-lines"></div></button>
             <div class="info-panel">
                 <div class="info-panel-header">Vastramaya</div>
                 <div class="info-panel-text">
@@ -1781,6 +2329,85 @@
 
     <div id="toast-container"></div>
 
+    <!-- NEW FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>Vastramaya</h3>
+                <p class="footer-desc">
+                    Where heritage craftsmanship meets contemporary elegance. Each piece is a testament to India's rich textile legacy, reimagined for the discerning modern connoisseur.
+                </p>
+                <div class="social-links">
+                    <!-- Instagram Link -->
+                    <a href="https://www.instagram.com/vastramaya_magic" target="_blank" class="social-icon" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                    <!-- WhatsApp Link with Pre-filled Message -->
+                    <a href="https://wa.me/918639478312?text=Hai%20i%20want%20to%20some%20products%20from%20you" target="_blank" class="social-icon" aria-label="WhatsApp">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.07 0C5.537 0 .226 5.305.226 11.838a11.824 11.824 0 001.588 5.92L0 24l6.391-1.676a11.82 11.82 0 005.678 1.464h.004c6.533 0 11.844-5.305 11.844-11.838 0-3.16-1.232-6.13-3.473-8.372"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul class="footer-links">
+                    <li><a href="/footer/about.html">About Us</a></li>
+                    <li><a href="/footer/contact.html">Contact Us</a></li>
+                    <li><a href="/shop.html">Shop</a></li>
+                    <li><a href="/footer/faqs.html">FAQs</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Policies</h4>
+                <ul class="footer-links">
+                    <li><a href="/footer/pravicy-policy.html">Privacy Policy</a></li>
+                    <li><a href="/footer/terms-and-conditions.html">Terms & Conditions</a></li>
+                    <li><a href="/footer/return-and-refund.html">Return & Refund Policy</a></li>
+                    <li><a href="/footer/shipping-policy.html">Shipping Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <div class="contact-info">
+                    <div class="footer-contact-item">
+                        <div class="icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </div>
+                        <div class="contact-details">
+                            <span class="contact-label">Mobile No</span>
+                            <span class="contact-value">+91 86394 78312</span>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                        <div class="contact-details">
+                            <span class="contact-label">Email</span>
+                            <span class="contact-value">vastramayamagic@gmail.com</span>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        </div>
+                        <div class="contact-details">
+                            <span class="contact-label">Adress</span>
+                            <span class="contact-value">Challapalli, A.P 521126</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>Designed & Developed by <a href="https://wixo.in" class="dev-link" target="_blank">wixo.in</a></div>
+        </div>
+    </footer>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -1814,16 +2441,17 @@
         let qvCurrentImageIndex = 0;
         let qvAutoPlayInterval;
 
+        let isLoginGuardActive = false;
+        let keepCartOpen = false;
+
         document.addEventListener('DOMContentLoaded', () => {
             checkAuth();
-            loadWishlistProducts();
-            updateWishlistCount();
-            initNavbarUI();
             loadCategories();
             fetchAllProducts();
             initLiveSearch();
             initAuthModal();
             initConfirmationPopup();
+            initNavbarUI();
         });
 
         function initConfirmationPopup() {
@@ -1856,6 +2484,20 @@
         }
 
         async function performRemoval(productId) {
+            const card = document.querySelector(`.card button[onclick*="${productId}"]`)?.closest('.card');
+            
+            if (card) {
+                // Add removal animation
+                card.classList.add('removing');
+                
+                // Wait for animation to complete
+                await new Promise(resolve => setTimeout(resolve, 400));
+                
+                // Remove the card from DOM
+                card.remove();
+            }
+            
+            // Remove from wishlist array
             const index = wishlist.indexOf(productId);
             if (index !== -1) {
                 wishlist.splice(index, 1);
@@ -1872,7 +2514,13 @@
                 }
                 
                 showToast("Removed from Wishlist");
-                loadWishlistProducts();
+                
+                // Check if wishlist is now empty
+                if (wishlist.length === 0) {
+                    document.getElementById('empty-state').style.display = 'block';
+                    document.getElementById('wishlist-grid').style.display = 'none';
+                }
+                
                 updateWishlistCount();
             }
             removalProductId = null;
@@ -1882,13 +2530,71 @@
             auth.onAuthStateChanged(user => {
                 currentUser = user;
                 if (user) {
+                    // USER IS LOGGED IN
                     syncWishlistFromFirestore();
                     syncCartToFirestore();
                     updateNavbarAuth(user);
+                    if (isLoginGuardActive) {
+                        closeLoginGuard();
+                    }
+                    loadWishlistProducts();
+                    updateWishlistCount();
+                    
+                    // Update profile info for logged-in user
+                    document.getElementById('user-name').textContent = user.displayName || 'User';
+                    document.getElementById('user-email').textContent = user.email;
+                    document.getElementById('user-name-mobile').textContent = user.displayName || 'User';
+                    document.getElementById('user-phone-mobile').innerHTML = user.email;
+                    
                 } else {
+                    // USER IS NOT LOGGED IN
                     updateNavbarAuth(null);
+                    showLoginGuard();
+                    
+                    // Show guest message for non-logged in users
+                    document.getElementById('user-name').textContent = 'Guest User';
+                    document.getElementById('user-email').textContent = 'Sign in to sync';
+                    document.getElementById('user-name-mobile').textContent = 'Guest';
+                    document.getElementById('user-phone-mobile').innerHTML = '<span class="m-login-text">Login / Sign Up</span>';
                 }
             });
+        }
+
+        function showLoginGuard() {
+            const modalOverlay = document.getElementById('login-modal-overlay');
+            const closeBtn = document.getElementById('close-modal-btn');
+            
+            isLoginGuardActive = true;
+            modalOverlay.classList.add('active', 'login-guard-active');
+            document.body.classList.add('login-modal-open');
+            closeBtn.style.display = 'none';
+            
+            document.querySelector('.modal-close-btn').style.display = 'none';
+            
+            modalOverlay.style.background = 'rgba(20, 10, 10, 0.85)';
+            
+            const closeModalOnClick = (e) => {
+                if (e.target === modalOverlay) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            };
+            
+            modalOverlay.addEventListener('click', closeModalOnClick);
+        }
+
+        function closeLoginGuard() {
+            const modalOverlay = document.getElementById('login-modal-overlay');
+            const closeBtn = document.getElementById('close-modal-btn');
+            
+            isLoginGuardActive = false;
+            modalOverlay.classList.remove('active', 'login-guard-active');
+            document.body.classList.remove('login-modal-open');
+            closeBtn.style.display = 'flex';
+            
+            document.querySelector('.modal-close-btn').style.display = 'flex';
+            
+            modalOverlay.style.background = '';
         }
 
         function updateNavbarAuth(user) {
@@ -1898,6 +2604,7 @@
             const authOnlyLinks = document.querySelectorAll('.auth-only');
 
             if (user) {
+                // Hide "Sign in" and show user info for logged-in users
                 authOnlyLinks.forEach(el => el.classList.remove('auth-hidden'));
                 triggerDesktop.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>Sign Out`;
                 triggerDesktop.onclick = (e) => { e.preventDefault(); auth.signOut(); };
@@ -1905,7 +2612,13 @@
                 document.getElementById('user-phone-mobile').innerHTML = user.email;
                 triggerMobile.onclick = (e) => { e.stopPropagation(); if(e.target.closest('.m-profile-popup-menu')) return; mProfilePopup.classList.toggle('active'); }
                 document.getElementById('mobile-logout-btn').onclick = () => auth.signOut();
+                
+                // Hide guest message in desktop navbar
+                document.getElementById('user-name').textContent = user.displayName || 'User';
+                document.getElementById('user-email').textContent = user.email;
+                
             } else {
+                // Show "Sign in" for non-logged in users
                 authOnlyLinks.forEach(el => el.classList.add('auth-hidden'));
                 triggerDesktop.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>Sign In`;
                 triggerDesktop.onclick = (e) => { e.preventDefault(); openAuthModal(); };
@@ -1913,6 +2626,10 @@
                 document.getElementById('user-phone-mobile').innerHTML = '<span class="m-login-text">Login / Sign Up</span>';
                 mProfilePopup.classList.remove('active');
                 triggerMobile.onclick = (e) => { e.preventDefault(); openAuthModal(); };
+                
+                // Show guest message in desktop navbar
+                document.getElementById('user-name').textContent = 'Guest User';
+                document.getElementById('user-email').textContent = 'Sign in to sync';
             }
         }
 
@@ -2387,7 +3104,9 @@
             
             function closeAllDropdowns() {
                 pPopup.classList.remove('show');
-                cartPopup.classList.remove('show');
+                if (!keepCartOpen) {
+                    cartPopup.classList.remove('show');
+                }
                 const mProfilePopup = document.getElementById('m-profile-popup');
                 if (mProfilePopup) mProfilePopup.classList.remove('active');
             }
@@ -2395,6 +3114,7 @@
             if (dCartToggle && cartPopup) {
                 dCartToggle.onclick = (e) => {
                     e.stopPropagation();
+                    keepCartOpen = false;
                     if (cartPopup.classList.contains('show')) {
                         cartPopup.classList.remove('show');
                     } else {
@@ -2456,11 +3176,20 @@
             const cartDrawerClose = document.getElementById('cart-drawer-close');
             if (mCartToggle && cartOverlay) {
                 mCartToggle.onclick = () => {
+                    keepCartOpen = false;
                     closeAllDropdowns();
                     cartOverlay.classList.add('open');
                 };
-                cartDrawerClose.onclick = () => cartOverlay.classList.remove('open');
-                cartOverlay.onclick = (e) => { if(e.target === cartOverlay) cartOverlay.classList.remove('open'); };
+                cartDrawerClose.onclick = () => {
+                    keepCartOpen = false;
+                    cartOverlay.classList.remove('open');
+                };
+                cartOverlay.onclick = (e) => { 
+                    if(e.target === cartOverlay) {
+                        keepCartOpen = false;
+                        cartOverlay.classList.remove('open'); 
+                    }
+                };
             }
 
             const mSearchToggle = document.getElementById('m-search-toggle');
@@ -2470,13 +3199,32 @@
         }
 
         function removeFromCart(uniqueId) {
+            keepCartOpen = true;
+            
             cart = cart.filter(item => String(item.uniqueId) !== String(uniqueId));
-            saveCart(true); renderCart();
+            saveCart(true); 
+            renderCart();
+            
+            setTimeout(() => {
+                if (keepCartOpen && cart.length > 0) {
+                    document.getElementById('cart-popup').classList.add('show');
+                }
+            }, 10);
         }
 
         function updateQuantity(uniqueId, change) {
+            keepCartOpen = true;
+            
             const item = cart.find(item => String(item.uniqueId) === String(uniqueId));
-            if (item) { item.quantity += change; if (item.quantity <= 0) removeFromCart(uniqueId); else { saveCart(true); renderCart(); }}
+            if (item) { 
+                item.quantity += change; 
+                if (item.quantity <= 0) {
+                    removeFromCart(uniqueId); 
+                } else { 
+                    saveCart(true); 
+                    renderCart(); 
+                }
+            }
         }
 
         async function syncCartToFirestore() {
@@ -2484,11 +3232,20 @@
             try {
                 const doc = await db.collection('users').doc(currentUser.uid).get();
                 if (doc.exists && doc.data().cart) {
-                    if (cart.length === 0) { cart = doc.data().cart; saveCart(false); renderCart(); } 
-                    else {
+                    if (cart.length === 0) { 
+                        cart = doc.data().cart; 
+                        saveCart(false); 
+                        renderCart(); 
+                    } else {
                          const dbCart = doc.data().cart || [];
-                         cart.forEach(localItem => { const existing = dbCart.find(d => String(d.uniqueId) === String(localItem.uniqueId)); if (existing) existing.quantity = Math.max(existing.quantity, localItem.quantity); else dbCart.push(localItem); });
-                         cart = dbCart; saveCart(true); renderCart();
+                         cart.forEach(localItem => { 
+                             const existing = dbCart.find(d => String(d.uniqueId) === String(localItem.uniqueId)); 
+                             if (existing) existing.quantity = Math.max(existing.quantity, localItem.quantity); 
+                             else dbCart.push(localItem); 
+                         });
+                         cart = dbCart; 
+                         saveCart(true); 
+                         renderCart();
                     }
                 } else if (cart.length > 0) saveCart(true);
             } catch (e) { console.error("Sync error", e); }
@@ -2510,7 +3267,10 @@
             const countMobile = document.getElementById('cart-count-mobile');
 
             let total = 0; let count = 0; let html = '';
-            if (cart.length === 0) html = '<div class="empty-cart-msg">Your cart is empty</div>';
+            if (cart.length === 0) {
+                html = '<div class="empty-cart-msg">Your cart is empty</div>';
+                keepCartOpen = false;
+            }
             else {
                 cart.forEach(item => {
                     total += item.price * item.quantity; count += item.quantity;
@@ -2550,8 +3310,19 @@
             document.querySelectorAll('.switch-to-login').forEach(el => el.addEventListener('click', goToLogin));
             document.querySelectorAll('.switch-to-signup').forEach(el => el.addEventListener('click', goToSignup));
 
-            closeModalBtn.addEventListener('click', () => { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; });
-            modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; }});
+            closeModalBtn.addEventListener('click', () => { 
+                if (!isLoginGuardActive) {
+                    modalOverlay.classList.remove('active'); 
+                    document.body.style.overflow = ''; 
+                }
+            });
+            
+            modalOverlay.addEventListener('click', (e) => { 
+                if (e.target === modalOverlay && !isLoginGuardActive) { 
+                    modalOverlay.classList.remove('active'); 
+                    document.body.style.overflow = ''; 
+                }
+            });
 
             forgotPasswordLink.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -2569,7 +3340,12 @@
                 const pass = document.getElementById('login-password').value;
                 document.getElementById('loader').style.display = 'flex';
                 auth.signInWithEmailAndPassword(email, pass)
-                    .then(() => { document.getElementById('loader').style.display = 'none'; showToast("Login Successful!"); modalOverlay.classList.remove('active'); })
+                    .then(() => { 
+                        document.getElementById('loader').style.display = 'none'; 
+                        showToast("Login Successful!"); 
+                        modalOverlay.classList.remove('active'); 
+                        document.body.style.overflow = '';
+                    })
                     .catch((error) => { document.getElementById('loader').style.display = 'none'; showToast(error.message); });
             });
 
@@ -2588,7 +3364,7 @@
                              });
                         });
                     })
-                    .then(() => { document.getElementById('loader').style.display = 'none'; showToast("Account Created!"); modalOverlay.classList.remove('active'); })
+                    .then(() => { document.getElementById('loader').style.display = 'none'; showToast("Account Created!"); modalOverlay.classList.remove('active'); document.body.style.overflow = ''; })
                     .catch((error) => { document.getElementById('loader').style.display = 'none'; showToast(error.message); });
             });
 
@@ -2601,7 +3377,9 @@
                                 name: result.user.displayName, email: result.user.email, createdAt: firebase.firestore.FieldValue.serverTimestamp()
                             }, { merge: true });
                         }
-                        showToast("Welcome " + result.user.displayName); modalOverlay.classList.remove('active');
+                        showToast("Welcome " + result.user.displayName); 
+                        modalOverlay.classList.remove('active'); 
+                        document.body.style.overflow = '';
                     })
                     .catch((error) => showToast(error.message));
             });
